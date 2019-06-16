@@ -29,7 +29,7 @@ print('Using version ' + version)
 # Define cluster and node pool parameters
 devpool = {
 	'name': 'devpool',
-	'size': 's-1vcpu-2gb',
+	'size': 's-2vcpu-4gb',
 	'count': 2}
 
 cluster = {
