@@ -70,12 +70,19 @@ class PyKube:
     self.create_object(objects.pvc())
     self.create_object(objects.nfs_server())
     self.create_object(objects.nfs_service())
-    sleep(5) # give it a little time to start
-    print('nfs running in cluster on {ip}'.format(ip=self.nfs_ip()))
-
+    ip = self.nfs_ip()
+    while (not ip):
+      print('Waiting for nfs startup ...')
+      sleep(3)
+      ip = self.nfs_ip()
+    print('nfs running in cluster on {ip}'.format(ip=ip))
+  
   def nfs_ip(self):
     nfs_ep = self.sess.get(named_path('endpoints', objects.NFS_SERVICE)).json()
-    return nfs_ep['subsets'][0]['addresses'][0]['ip']
+    if 'subsets' in nfs_ep:
+      return nfs_ep['subsets'][0]['addresses'][0]['ip']
+    else:
+      return None
 
   def deploy_ssh(self):
     self.create_object(objects.ssh_pubkey())
