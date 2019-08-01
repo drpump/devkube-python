@@ -99,6 +99,13 @@ class PyKube:
       port=objects.WEB_EXPORT,
       ip=self.get_node_ips()[0]))
 
+  def deploy_theia(self):
+    self.create_object(objects.theia_server(self.nfs_ip()))
+    self.create_object(objects.theia_service())
+    print('Theia server accessible at http://{ip}:{port}'.format(
+      port=objects.THEIA_EXPORT,
+      ip=self.get_node_ips()[0]))
+  
   def get_nodes(self):
     return self.sess.get(api_path(CORE_VERSION)+'/nodes').json()['items']
 

@@ -11,6 +11,9 @@ NFS_VOLUME = 'nfs-volume'
 WEB_SERVER_ROLE = 'web-server'
 WEB_SERVICE = 'web-service'
 WEB_EXPORT=30080
+THEIA_SERVER_ROLE = 'theia-server'
+THEIA_SERVICE = 'theia-service'
+THEIA_EXPORT=30030
 SSHD_ROLE = 'sshd-server'
 SSHD_SERVICE = 'sshd-service'
 SSHD_EXPORT = 30022
@@ -102,6 +105,16 @@ def alpine_server(nfs_host):
   }
   return(nfs_deployment(name, 'alpine-role', container, nfs_host, mount_point='/mnt/nfs'))
 
+def theia_server(nfs_host):
+  name = 'theia'
+  mount_point = '/home/project'
+  container = {
+                'name': name,
+                'image': "theiaide/theia:next",
+                'ports': [{'name': 'theia', 'containerPort': 3000}]
+              }
+  return(nfs_deployment(name, THEIA_SERVER_ROLE, container, nfs_host, mount_point=mount_point))
+
 def ssh_pubkey(pubkey=encode_pubkey()):
   "Secrets object containing public key for rsa_id, requires rsa public key for authorised user encoded as base64"
   return {
@@ -187,6 +200,9 @@ def exposed_service(name, match_role, port_name, port, nodeport, namespace):
 
 def web_service(match_role=WEB_SERVER_ROLE, namespace='default'):
   return exposed_service(WEB_SERVICE, match_role, 'http', 80, WEB_EXPORT, namespace)
+
+def theia_service(match_role=THEIA_SERVER_ROLE, namespace='default'):
+  return exposed_service(THEIA_SERVICE, match_role, 'http', 3000, THEIA_EXPORT, namespace)
 
 def ssh_service(match_role=SSHD_ROLE, namespace='default'):
   return exposed_service(SSHD_SERVICE, match_role, 'ssh', 22, SSHD_EXPORT, namespace)
